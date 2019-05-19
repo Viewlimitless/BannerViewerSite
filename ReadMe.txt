@@ -1,6 +1,9 @@
 login u
 password 1
 
+in MySQL console:
+create database banners;
+
 if problem "Time Zone Problems" in MySQL
 SET GLOBAL time_zone = '+8:00';
 
