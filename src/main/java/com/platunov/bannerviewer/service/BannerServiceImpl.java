@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+
 @Service
 public class BannerServiceImpl implements BannerService {
     private BannerRepo bannerRepo;
@@ -23,6 +24,7 @@ public class BannerServiceImpl implements BannerService {
         this.bannerRepo = bannerRepo;
         this.categoryRepo = categoryRepo;
         this.requestRepo = requestRepo;
+        new Object();
     }
 
     @Override
@@ -71,57 +73,31 @@ public class BannerServiceImpl implements BannerService {
     public Banner getInstance(String categoryRequest, String remoteAddr, String userAgent) {
 
         Category category = categoryRepo.findByReqNameContainsAndDeletedIsFalse(categoryRequest);
+        Banner banner = null;
 
-        List<Banner> banners = bannerRepo.findAllByCategoryEqualsAndDeletedIsFalseOrderByPriceDesc(category);
+        if(category!=null) {
 
-        Float max = Float.MIN_VALUE;
-        for (int i = 0; i < banners.size(); i++) {
-            if (max <= banners.get(i).getPrice().floatValue()) {
-                max = banners.get(i).getPrice().floatValue();
-            } else {
-                banners.remove(i);
-                i--;
-            }
-        }
-        Banner banner;
-        if (banners.size() == 0) {
-            requestRepo.save(new Request(
-                    null,
-                    userAgent,
+            Date afterDate = new Date();
+            afterDate.setDate(new Date().getDate() - 1);
+            Object[] banners = bannerRepo.findBannersForVisitor(
+                    category.getId(),
                     remoteAddr,
-                    new Date()
-            ));
-            return null;
-        }
-        int random = (int) (Math.random() * banners.size());
-        banner = banners.get(random);
+                    userAgent,
+                    afterDate).toArray();
 
-        Date after = new Date();
-        after.setDate(new Date().getDate() - 1);
-        List<Request> requests = requestRepo.findAllByBannerAndAgentAndIpAndDateGreaterThan(
+            if(banners.length>0)
+            banner = (Banner) banners[(int) (Math.random() * banners.length)];
+
+        }
+
+        requestRepo.save(new Request(
                 banner,
                 userAgent,
                 remoteAddr,
-                after
-        );
+                new Date()
+        ));
 
-        if (requests.size() > 0) {
-            requestRepo.save(new Request(
-                    null,
-                    userAgent,
-                    remoteAddr,
-                    new Date()
-            ));
-            return null;
-        } else {
-            requestRepo.save(new Request(
-                    banner,
-                    userAgent,
-                    remoteAddr,
-                    new Date()
-            ));
-            return banner;
-        }
+        return banner;
     }
 
     @Override
