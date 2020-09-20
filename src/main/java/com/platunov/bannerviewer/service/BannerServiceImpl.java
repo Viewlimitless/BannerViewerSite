@@ -24,7 +24,6 @@ public class BannerServiceImpl implements BannerService {
         this.bannerRepo = bannerRepo;
         this.categoryRepo = categoryRepo;
         this.requestRepo = requestRepo;
-        new Object();
     }
 
     @Override

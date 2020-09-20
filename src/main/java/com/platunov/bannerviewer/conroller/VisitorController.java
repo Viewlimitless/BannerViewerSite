@@ -2,6 +2,7 @@ package com.platunov.bannerviewer.conroller;
 
 import com.platunov.bannerviewer.domain.Banner;
 import com.platunov.bannerviewer.service.BannerService;
+import com.platunov.bannerviewer.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -16,10 +17,12 @@ import javax.servlet.http.HttpServletRequest;
 public class VisitorController {
 
     private BannerService bannerService;
+    private CategoryService categoryService;
 
     @Autowired
-    public VisitorController(BannerService bannerService) {
+    public VisitorController(BannerService bannerService, CategoryService categoryService) {
         this.bannerService = bannerService;
+        this.categoryService = categoryService;
     }
 
     @GetMapping("/bid")
@@ -28,6 +31,10 @@ public class VisitorController {
             Model model,
             HttpServletRequest request
     ) {
+
+        if (categoryService.findByRequest(category).size() == 0) {
+            return "redirect:/bid/nocontent";
+        }
 
         Banner banner = bannerService.getInstance(
                 category,
