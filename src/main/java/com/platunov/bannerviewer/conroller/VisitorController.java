@@ -29,7 +29,6 @@ public class VisitorController {
             HttpServletRequest request
     ) {
 
-        category = category.substring(1, category.length() - 1);
         Banner banner = bannerService.getInstance(
                 category,
                 request.getRemoteAddr(),
