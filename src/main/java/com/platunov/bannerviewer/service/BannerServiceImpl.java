@@ -84,8 +84,9 @@ public class BannerServiceImpl implements BannerService {
                     userAgent,
                     afterDate).toArray();
 
-            if(banners.length>0)
-            banner = (Banner) banners[(int) (Math.random() * banners.length)];
+            if (banners.length > 0) {
+                banner = (Banner) banners[(int) (Math.random() * banners.length)];
+            }
 
         }
 
