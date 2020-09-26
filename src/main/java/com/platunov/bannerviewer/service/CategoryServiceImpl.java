@@ -73,35 +73,17 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public boolean correctInstance(Category category) {
-
-        if
-                        (category.getName().trim().isEmpty() ||
-                                category.getReqName().trim().isEmpty())
-                                                                        {return false;}
-
-
-
-
-        else if
-                        (categoryRepo
-                        .findAllByDeletedAndNameAndIdIsNot(
-                                false,
-                                category.getName(),
-                                category.getId()
-                        ).size() != 0)
-                                                                        {return false;}
-
-
-
-        else
-
-                            return categoryRepo
-                                    .findAllByDeletedAndReqNameAndIdIsNot(
-                                            false,
-                                            category.getReqName(),
-                                            category.getId()
-                                    ).size() == 0;
-
-
+        if (category.getName().trim().isEmpty() || category.getReqName().trim().isEmpty()) {
+            return false;
+        } else if
+        (categoryRepo.findAllByDeletedAndNameAndIdIsNot(
+                        false,
+                        category.getName(),
+                        category.getId()).size() != 0) {
+            return false;
+        } else return categoryRepo.findAllByDeletedAndReqNameAndIdIsNot(
+                        false,
+                        category.getReqName(),
+                        category.getId()).size() == 0;
     }
 }
