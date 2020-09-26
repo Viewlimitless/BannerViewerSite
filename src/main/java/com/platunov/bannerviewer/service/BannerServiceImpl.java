@@ -107,20 +107,19 @@ public class BannerServiceImpl implements BannerService {
     @Override
     public boolean correctInstance(Banner banner) {
 
-        try {
-            if (banner.getContent().isEmpty()) {
-                return false;
-            } else if (categoryRepo.findById(banner.getCategory().getId()).get().isDeleted()) {
-                return false;
-            } else
-                return bannerRepo.findAllByDeletedAndNameAndIdIsNot(
-                        false,
-                        banner.getName(),
-                        banner.getId()
-                ).size() == 0;
-        } catch (NullPointerException e) {
+        Optional<Category> optional = categoryRepo.findById(banner.getCategory().getId());
+        if (banner.getContent().isEmpty()) {
+            return false;
+        } else if (!optional.isPresent()) {
+            return false;
+        } else if (optional.get().isDeleted()) {
             return false;
         }
+        return bannerRepo.findAllByDeletedAndNameAndIdIsNot(
+                false,
+                banner.getName(),
+                banner.getId()
+        ).size() == 0;
     }
 
 }
