@@ -48,8 +48,6 @@ public interface BannerRepo extends CrudRepository<Banner, Long> {
             "                                    ON t2.banner_id = t1.id) t3\n" +
             "                         WHERE  t3.date is null) t5);";
 
-    List<Banner> findByNameAndDeleted(String name, boolean deleted);
-
     List<Banner> findAllByDeleted(boolean deleted);
 
     List<Banner> findAllByNameContainsAndDeletedIsFalse(String name);
