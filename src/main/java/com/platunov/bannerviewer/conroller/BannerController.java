@@ -97,7 +97,9 @@ public class BannerController {
     ) {
 
         banner.setName(bannerName);
-        banner.setContent(content);
+        if (!content.isEmpty()){
+            banner.setContent(content);
+        }
         banner.setCategory(category);
 
 
