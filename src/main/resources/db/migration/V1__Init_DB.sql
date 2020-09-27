@@ -26,7 +26,7 @@ insert into hibernate_sequence values ( 1 );
 create table request (
     id bigint not null,
     user_agent varchar(255) not null,
-    date datetime not null,
+    date datetime DEFAULT CURRENT_TIMESTAMP,
     ip_address varchar(255) not null,
     banner_id bigint ,
     primary key (id));

@@ -9,6 +9,7 @@ import com.platunov.bannerviewer.repos.RequestRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -76,8 +77,7 @@ public class BannerServiceImpl implements BannerService {
 
         if(category!=null) {
 
-            Date afterDate = new Date();
-            afterDate.setDate(new Date().getDate() - 1);
+            LocalDate afterDate = LocalDate.now().minusDays(1);
             Object[] banners = bannerRepo.findBannersForVisitor(
                     category.getId(),
                     remoteAddr,
