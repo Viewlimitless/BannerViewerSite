@@ -29,7 +29,7 @@ How to use?
 - http://host:port/bid?category=<REQ_NAME>
 
 2 for admin:
-- login: u password: 1
+- login: u password: secret123
 - http://localhost:8080/login
 - http://localhost:8080/banner
 - http://localhost:8080/category
