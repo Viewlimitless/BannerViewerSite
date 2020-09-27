@@ -24,6 +24,7 @@ if problem "Time Zone Problems" in MySQL console:
 - java -jar bannerviewer-1.0-SNAPSHOT.jar
 
 How to use?
+
 1 for visitor:
 - http://host:port/bid?category=<REQ_NAME>
 
