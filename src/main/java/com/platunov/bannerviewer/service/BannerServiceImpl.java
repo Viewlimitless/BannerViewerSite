@@ -6,14 +6,16 @@ import com.platunov.bannerviewer.domain.Request;
 import com.platunov.bannerviewer.repos.BannerRepo;
 import com.platunov.bannerviewer.repos.CategoryRepo;
 import com.platunov.bannerviewer.repos.RequestRepo;
+import com.platunov.bannerviewer.util.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 @Service
 public class BannerServiceImpl implements BannerService {
@@ -78,7 +80,7 @@ public class BannerServiceImpl implements BannerService {
 
         if (categories.size() == 1) {
 
-            LocalDate afterDate = LocalDate.now().minusDays(1);
+            Date afterDate = DateUtils.asDate(LocalDateTime.now().minusDays(1));
             Object[] banners = bannerRepo.findBannersForVisitor(
                     categories.get(0).getId(),
                     remoteAddr,
@@ -95,7 +97,7 @@ public class BannerServiceImpl implements BannerService {
                 banner,
                 userAgent,
                 remoteAddr,
-                new Date()
+                DateUtils.asDate(LocalDateTime.now())
         ));
 
         return banner;

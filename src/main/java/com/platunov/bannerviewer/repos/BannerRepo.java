@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -59,7 +60,5 @@ public interface BannerRepo extends CrudRepository<Banner, Long> {
 
     @Query(value = GET_BANNER_TO_VISITOR,
             nativeQuery = true)
-    Set<Banner> findBannersForVisitor(Long categoryId, String ipAddress, String userAgent, LocalDate afterDate);
-
-
+    Set<Banner> findBannersForVisitor(Long categoryId, String ipAddress, String userAgent, Date afterDate);
 }
