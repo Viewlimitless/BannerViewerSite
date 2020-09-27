@@ -9,10 +9,9 @@ import com.platunov.bannerviewer.repos.RequestRepo;
 import com.platunov.bannerviewer.util.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -31,16 +30,19 @@ public class BannerServiceImpl implements BannerService {
     }
 
     @Override
+    @Transactional
     public Iterable<Banner> findAll() {
         return bannerRepo.findAllByDeleted(false);
     }
 
     @Override
+    @Transactional
     public void save(Banner banner) {
         bannerRepo.save(banner);
     }
 
     @Override
+    @Transactional
     public void deleteById(Long id) {
         Optional<Banner> optional = bannerRepo.findById(id);
 
@@ -54,6 +56,7 @@ public class BannerServiceImpl implements BannerService {
     }
 
     @Override
+    @Transactional
     public Banner getInstance() {
         Iterable<Category> categories = categoryRepo.findAllByDeleted(false);
         if (categories.iterator().hasNext()) {
@@ -68,6 +71,7 @@ public class BannerServiceImpl implements BannerService {
     }
 
     @Override
+    @Transactional
     public Banner getInstance(String categoryRequest, String remoteAddr, String userAgent) {
 
         List <Category> categories = categoryRepo.findByReqNameContainsAndDeletedIsFalse(categoryRequest);
@@ -99,11 +103,13 @@ public class BannerServiceImpl implements BannerService {
     }
 
     @Override
+    @Transactional
     public List<Banner> findAllByNameContains(String name) {
         return bannerRepo.findAllByNameContainsAndDeletedIsFalse(name);
     }
 
     @Override
+    @Transactional
     public boolean correctInstance(Banner banner) {
 
         Optional<Category> optional = categoryRepo.findById(banner.getCategory().getId());
