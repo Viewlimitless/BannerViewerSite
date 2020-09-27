@@ -29,11 +29,6 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public List<Category> findByName(String name) {
-        return categoryRepo.findByNameAndDeleted(name, false);
-    }
-
-    @Override
     public Category save(Category category) {
         return categoryRepo.save(category);
     }
@@ -54,16 +49,6 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public List<Category> findAllByNameContains(String name) {
         return categoryRepo.findAllByNameContainsAndDeletedIsFalse(name);
-    }
-
-    @Override
-    public Category findById(Long id) {
-        return categoryRepo.findCategoryById(id);
-    }
-
-    @Override
-    public List<Category> findByRequest(String request) {
-        return categoryRepo.findByReqNameAndDeleted(request, false);
     }
 
     @Override

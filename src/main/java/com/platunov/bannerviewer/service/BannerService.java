@@ -5,7 +5,6 @@ import com.platunov.bannerviewer.domain.Banner;
 import java.util.List;
 
 public interface BannerService {
-    List<Banner> findByName(String name);
 
     Iterable<Banner> findAll();
 

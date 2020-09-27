@@ -31,11 +31,6 @@ public class BannerServiceImpl implements BannerService {
     }
 
     @Override
-    public List<Banner> findByName(String name) {
-        return bannerRepo.findByNameAndDeleted(name, false);
-    }
-
-    @Override
     public Iterable<Banner> findAll() {
         return bannerRepo.findAllByDeleted(false);
     }
