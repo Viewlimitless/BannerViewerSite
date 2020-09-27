@@ -32,9 +32,6 @@ public class VisitorController {
             HttpServletRequest request
     ) {
 
-        if (categoryService.findByRequest(category).size() == 0) {
-            return "redirect:/bid/nocontent";
-        }
 
         Banner banner = bannerService.getInstance(
                 category,

@@ -13,6 +13,7 @@ import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class BannerServiceImpl implements BannerService {
@@ -72,14 +73,14 @@ public class BannerServiceImpl implements BannerService {
     @Override
     public Banner getInstance(String categoryRequest, String remoteAddr, String userAgent) {
 
-        Category category = categoryRepo.findByReqNameContainsAndDeletedIsFalse(categoryRequest);
+        List <Category> categories = categoryRepo.findByReqNameContainsAndDeletedIsFalse(categoryRequest);
         Banner banner = null;
 
-        if(category!=null) {
+        if (categories.size() == 1) {
 
             LocalDate afterDate = LocalDate.now().minusDays(1);
             Object[] banners = bannerRepo.findBannersForVisitor(
-                    category.getId(),
+                    categories.get(0).getId(),
                     remoteAddr,
                     userAgent,
                     afterDate).toArray();
