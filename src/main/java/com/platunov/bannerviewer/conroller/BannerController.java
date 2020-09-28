@@ -4,6 +4,7 @@ import com.platunov.bannerviewer.domain.Banner;
 import com.platunov.bannerviewer.domain.Category;
 import com.platunov.bannerviewer.service.BannerService;
 import com.platunov.bannerviewer.service.CategoryService;
+import com.platunov.bannerviewer.util.ProjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -74,6 +75,10 @@ public class BannerController {
         model.addAttribute("banners", getBannersByFilter(filter));
         model.addAttribute("filter", filter);
 
+        if(banner == null || banner.isDeleted()) {
+            return "bannerList";
+        }
+
         if (myEditorTitle.isEmpty()) {
             model.addAttribute("editorTitle", String.format("%s ID: %s", banner.getName(), banner.getId()));
         } else {
@@ -103,12 +108,13 @@ public class BannerController {
         banner.setCategory(category);
 
 
-        if (!tryParseFloat(price)) {
+        try {
+            banner.setPriceFloat(ProjectUtils.tryParseFloat(price));
+        } catch (NumberFormatException e) {
             model.addAttribute("allertMessage", "Changes are not applied. Price is incorrect");
             bannerEditForm(banner, "", filter, model);
             return "bannerEdit";
         }
-        banner.setPriceFloat(Float.parseFloat(price));
 
 
         if (!bannerService.correctInstance(banner)) {
@@ -131,14 +137,5 @@ public class BannerController {
     ) {
         bannerService.deleteById(banner);
         return "redirect:/banner";
-    }
-
-    private boolean tryParseFloat(String value) {
-        try {
-            Float.parseFloat(value);
-            return true;
-        } catch (NumberFormatException e) {
-            return false;
-        }
     }
 }

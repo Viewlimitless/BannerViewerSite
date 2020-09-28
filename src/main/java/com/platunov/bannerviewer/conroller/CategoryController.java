@@ -71,6 +71,10 @@ public class CategoryController {
         model.addAttribute("categories", getCategoriesByFilter(filter));
         model.addAttribute("filter", filter);
 
+        if(category == null || category.isDeleted()) {
+            return "categoryList";
+        }
+
         if (myEditorTitle.isEmpty()) {
             model.addAttribute("editorTitle", String.format("%s ID: %s", category.getName(), category.getId()));
         } else {
