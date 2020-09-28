@@ -7,7 +7,7 @@
         </div>
         <div class="card-body ">
             <form action="/banner" method="post">
-
+                <input type="hidden" name="_method" value="put"/>
                 <div class="form-group row ">
                     <label class="col-sm-2 col-form-label">Name</label>
                     <div class="col-sm-5">
@@ -64,7 +64,8 @@
         </div>
 
         <div class="text-right">
-            <form action="/banner/delete" method="post">
+            <form action="/banner" method="post">
+                <input type="hidden" name="_method" value="delete"/>
                 <input type="hidden" value="${banner.id}" name="bannerId">
                 <input type="hidden" value="${_csrf.token}" name="_csrf">
                 <button type="submit" class="btn btn-primary mt-2 mr-3 bg-danger">Delete</button>

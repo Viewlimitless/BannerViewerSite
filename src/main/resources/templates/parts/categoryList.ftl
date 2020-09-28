@@ -26,7 +26,7 @@
                 </li>
             </#list>
             <div class="text-center">
-                <form action="/category/add" method="post">
+                <form action="/category" method="post">
                     <input type="hidden" name="_csrf" value="${_csrf.token}"/>
                     <button type="submit" class="btn btn-primary btn-lg btn-block">Create new Category</button>
                 </form>

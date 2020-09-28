@@ -46,7 +46,7 @@ public class CategoryController {
         return categories;
     }
 
-    @PostMapping("add")
+    @PostMapping
     public String add(
             @RequestParam(required = false, defaultValue = "") String filter,
             Model model
@@ -80,7 +80,7 @@ public class CategoryController {
         return "categoryEdit";
     }
 
-    @PostMapping
+    @PutMapping
     public String categorySave(
             @RequestParam String categoryName,
             @RequestParam String request,
@@ -105,7 +105,7 @@ public class CategoryController {
         return "redirect:/category";
     }
 
-    @PostMapping("delete")
+    @DeleteMapping
     public String deleteCategory(
             @RequestParam("categoryId") Category category,
             @RequestParam(required = false, defaultValue = "") String filter,

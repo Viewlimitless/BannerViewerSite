@@ -43,7 +43,7 @@ public class BannerController {
         return banners;
     }
 
-    @PostMapping("add")
+    @PostMapping
     public String add(
             @RequestParam(required = false, defaultValue = "") String filter,
             Model model
@@ -85,7 +85,7 @@ public class BannerController {
         return "bannerEdit";
     }
 
-    @PostMapping
+    @PutMapping
     public String bannerSave(
             @RequestParam String bannerName,
             @RequestParam String content,
@@ -125,7 +125,7 @@ public class BannerController {
         return "redirect:/banner";
     }
 
-    @PostMapping("delete")
+    @DeleteMapping
     public String deleteBanner(
             @RequestParam("bannerId") Long banner
     ) {
