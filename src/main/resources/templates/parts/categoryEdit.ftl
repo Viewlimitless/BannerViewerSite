@@ -18,7 +18,7 @@
                 <div class="form-group row">
                     <label class="col-sm-2 col-form-label">Request</label>
                     <div class="col-sm-5">
-                        <input type="text" class="form-control" name="request" value="${category.reqName}"
+                        <input type="text" class="form-control" name="request" value="${category.reqname}"
                                placeholder="Enter category's request">
                     </div>
                 </div>

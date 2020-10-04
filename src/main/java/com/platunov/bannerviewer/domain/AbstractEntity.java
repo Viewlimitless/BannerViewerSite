@@ -7,12 +7,12 @@ import java.time.LocalDateTime;
 @MappedSuperclass
 public abstract class AbstractEntity implements Serializable {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     Long id;
     LocalDateTime created;
     LocalDateTime updated;
 
-    @Id
-    @GeneratedValue
     public Long getId() {
         return id;
     }

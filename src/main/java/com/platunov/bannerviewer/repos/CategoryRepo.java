@@ -11,9 +11,9 @@ public interface CategoryRepo extends CrudRepository<Category, Long> {
 
     List<Category> findAllByNameContainsAndDeletedIsFalse(String name);
 
-    List<Category> findByReqNameAndDeletedIsFalse(String name);
+    List<Category> findByReqnameAndDeletedIsFalse(String name);
 
     List<Category> findAllByDeletedAndNameAndIdIsNot(boolean deleted, String name, Long id);
 
-    List<Category> findAllByDeletedAndReqNameAndIdIsNot(boolean deleted, String reqName, Long id);
+    List<Category> findAllByDeletedAndReqnameAndIdIsNot(boolean deleted, String reqname, Long id);
 }

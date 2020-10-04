@@ -113,7 +113,7 @@ public class CategoryController {
             if (optional.isPresent()) {
                 category = optional.get();
                 category.setName(categoryName);
-                category.setReqName(request);
+                category.setReqname(request);
             } else return "redirect:/category";
         }
 

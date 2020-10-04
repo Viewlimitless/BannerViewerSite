@@ -74,7 +74,7 @@ public class BannerServiceImpl implements BannerService {
     @Transactional
     public Banner getInstance(String categoryRequest, String remoteAddr, String userAgent) {
 
-        List <Category> categories = categoryRepo.findByReqNameAndDeletedIsFalse(categoryRequest);
+        List <Category> categories = categoryRepo.findByReqnameAndDeletedIsFalse(categoryRequest);
         Banner banner = null;
 
         if (categories.size() == 1) {

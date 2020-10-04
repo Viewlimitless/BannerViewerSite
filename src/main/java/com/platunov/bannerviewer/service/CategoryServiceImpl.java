@@ -72,7 +72,7 @@ public class CategoryServiceImpl implements CategoryService {
     public boolean correctInstance(Category category) {
         if (category.getName() == null || category.getName().trim().isEmpty() || category.getName().length() > 255 ){
             return false;
-        }else if (category.getReqName() == null || category.getReqName().trim().isEmpty() || category.getReqName().length() > 255){
+        }else if (category.getReqname() == null || category.getReqname().trim().isEmpty() || category.getReqname().length() > 255){
             return false;
         } else if
         (categoryRepo.findAllByDeletedAndNameAndIdIsNot(
@@ -81,9 +81,9 @@ public class CategoryServiceImpl implements CategoryService {
                         category.getId() == null ? -1 : category.getId()
                 ).size() != 0) {
             return false;
-        } else return categoryRepo.findAllByDeletedAndReqNameAndIdIsNot(
+        } else return categoryRepo.findAllByDeletedAndReqnameAndIdIsNot(
                     false,
-                    category.getReqName(),
+                    category.getReqname(),
                     category.getId() == null ? -1 : category.getId()
             ).size() == 0;
     }
