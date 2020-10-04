@@ -58,10 +58,8 @@ public class CategoryController {
             Model model
     ) {
 
-        String editorTitle = "Create new Category";
-        model.addAttribute("editorTitle", editorTitle);
         return categoryEditForm(new CategoryDto("new Category", "request", false)
-                , editorTitle, filter, model);
+                , "Create new Category", filter, model);
     }
 
     @GetMapping("{category}")
