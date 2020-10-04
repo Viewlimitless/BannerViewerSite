@@ -2,6 +2,8 @@ package com.platunov.bannerviewer.conroller;
 
 import com.platunov.bannerviewer.domain.Banner;
 import com.platunov.bannerviewer.domain.Category;
+import com.platunov.bannerviewer.dto.BannerDto;
+import com.platunov.bannerviewer.mapper.BannerMapper;
 import com.platunov.bannerviewer.service.BannerService;
 import com.platunov.bannerviewer.service.CategoryService;
 import com.platunov.bannerviewer.util.ProjectUtils;
@@ -10,38 +12,46 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 @Controller
 @RequestMapping("/banner")
 public class BannerController {
 
     private BannerService bannerService;
     private CategoryService categoryService;
+    private BannerMapper bannerMapper;
 
     @Autowired
-    public BannerController(BannerService bannerService, CategoryService categoryService) {
+    public BannerController(BannerService bannerService, CategoryService categoryService, BannerMapper bannerMapper) {
         this.bannerService = bannerService;
         this.categoryService = categoryService;
+        this.bannerMapper = bannerMapper;
     }
 
     @GetMapping
     public String bannerList(
             @RequestParam(required = false, defaultValue = "") String filter,
             Model model) {
-        Iterable<Banner> banners = getBannersByFilter(filter);
+        List<BannerDto> banners = getBannersByFilter(filter);
 
         model.addAttribute("banners", banners);
         model.addAttribute("filter", filter);
         return "bannerList";
     }
 
-    private Iterable<Banner> getBannersByFilter(@RequestParam(required = false, defaultValue = "") String filter) {
-        Iterable<Banner> banners;
+    private List<BannerDto> getBannersByFilter(@RequestParam(required = false, defaultValue = "") String filter) {
         if (filter != null && !filter.isEmpty()) {
-            banners = bannerService.findAllByNameContains(filter);
+            return bannerService.findAllByNameContains(filter).stream()
+                    .map(bannerMapper::toDto)
+                    .collect(Collectors.toList());
         } else {
-            banners = bannerService.findAll();
+            return bannerService.findAll().stream()
+                    .map(bannerMapper::toDto)
+                    .collect(Collectors.toList());
         }
-        return banners;
     }
 
     @PostMapping
@@ -49,38 +59,46 @@ public class BannerController {
             @RequestParam(required = false, defaultValue = "") String filter,
             Model model
     ) {
-        Banner banner = bannerService.getInstance();
+        BannerDto bannerDto = bannerMapper.toDto(bannerService.getInstance());
 
-        if (banner != null) {
-            bannerService.save(banner);
+        if (bannerDto.getCategory() == null) {
+            model.addAttribute("mainAlertMessage", "Create category first");
+            return bannerList(filter, model);
+        }
 
-            bannerEditForm(banner, "Create new Banner", filter, model);
-
-            return "bannerEdit";
-        } else model.addAttribute("banners", bannerService.findAllByNameContains(filter));
-        model.addAttribute("filter", filter);
-        model.addAttribute("mainAlertMessage", "Create category first");
-        return "bannerList";
+        return bannerEditForm(bannerDto, "Create new Banner", filter, model);
     }
 
     @GetMapping("{banner}")
     public String bannerEditForm(
-            @PathVariable Banner banner,
+            @PathVariable("banner") String bannerId,
             @RequestParam(required = false, defaultValue = "") String myEditorTitle,
             @RequestParam(required = false, defaultValue = "") String filter,
             Model model
+    ){
+        Optional<Banner> optional = bannerService.getById(ProjectUtils.tryParseLong(bannerId));
+        if(optional.isPresent() && !optional.get().isDeleted()){
+            return bannerEditForm(bannerMapper.toDto(optional.get()), myEditorTitle, filter, model);
+        }else return bannerList(filter, model);
+    }
+
+    private String bannerEditForm(
+            BannerDto bannerDto,
+            String myEditorTitle,
+            String filter,
+            Model model
     ) {
 
-        model.addAttribute("banner", banner);
+        model.addAttribute("banner", bannerDto);
         model.addAttribute("banners", getBannersByFilter(filter));
         model.addAttribute("filter", filter);
 
-        if(banner == null || banner.isDeleted()) {
+        if (bannerDto == null || bannerDto.isDeleted()) {
             return "bannerList";
         }
 
         if (myEditorTitle.isEmpty()) {
-            model.addAttribute("editorTitle", String.format("%s ID: %s", banner.getName(), banner.getId()));
+            model.addAttribute("editorTitle", String.format("%s ID: %s", bannerDto.getName(), bannerDto.getId()));
         } else {
             model.addAttribute("editorTitle", myEditorTitle);
         }
@@ -95,36 +113,46 @@ public class BannerController {
             @RequestParam String bannerName,
             @RequestParam String content,
             @RequestParam String price,
-            @RequestParam("categorySelected") Category category,
-            @RequestParam("bannerId") Banner banner,
+            @RequestParam("categorySelected") String categoryId,
+            @RequestParam("bannerId") String bannerId,
             @RequestParam(required = false, defaultValue = "") String filter,
             Model model
     ) {
-
-        banner.setName(bannerName);
-        if (!content.isEmpty()){
-            banner.setContent(content);
+        Long catId = ProjectUtils.tryParseLong(categoryId);
+        Long banId = ProjectUtils.tryParseLong(bannerId);
+        if (catId.longValue() == -1) {
+            return "redirect:/banner";
         }
-        banner.setCategory(category);
-
+        Optional<Category> optionalCategory = categoryService.getById(catId);
+        if (!optionalCategory.isPresent()) {
+            return "redirect:/banner";
+        }
+        Banner banner;
+        if (banId == -1) {
+            banner = new Banner();
+        } else {
+            Optional<Banner> optionalBanner = bannerService.getById(banId);
+            banner = optionalBanner.isPresent() ? optionalBanner.get() : new Banner();
+        }
+        banner.setCategory(optionalCategory.get());
+        banner.setName(bannerName);
+        banner.setContent(content);
+        banner.setDeleted(false);
 
         try {
             banner.setPriceFloat(ProjectUtils.parseFloat(price));
         } catch (NumberFormatException e) {
             model.addAttribute("allertMessage", "Changes are not applied. Price is incorrect");
-            bannerEditForm(banner, "", filter, model);
+            bannerEditForm(bannerMapper.toDto(banner), "", filter, model);
             return "bannerEdit";
         }
-
 
         if (!bannerService.correctInstance(banner)) {
             model.addAttribute("allertMessage", "Changes are not applied. Banner name is already exist or\n" +
                     "text is empty or category already deleted");
-            bannerEditForm(banner, "", filter, model);
+            bannerEditForm(bannerMapper.toDto(banner), "", filter, model);
             return "bannerEdit";
         }
-
-        banner.setDeleted(false);
 
         bannerService.save(banner);
 

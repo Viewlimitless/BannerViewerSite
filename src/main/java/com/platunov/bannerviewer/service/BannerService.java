@@ -3,14 +3,17 @@ package com.platunov.bannerviewer.service;
 import com.platunov.bannerviewer.domain.Banner;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface BannerService {
 
-    Iterable<Banner> findAll();
+    List<Banner> findAll();
 
     void save(Banner banner);
 
     void deleteById(Long id);
+
+    Optional<Banner> getById(Long id);
 
     Banner getInstance();
 

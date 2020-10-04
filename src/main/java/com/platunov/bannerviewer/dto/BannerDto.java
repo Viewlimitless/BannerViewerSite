@@ -1,45 +1,29 @@
-package com.platunov.bannerviewer.domain;
+package com.platunov.bannerviewer.dto;
 
-
+import com.platunov.bannerviewer.domain.Category;
 import org.hibernate.annotations.Type;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import java.math.BigDecimal;
 
-@Entity
-public class Banner extends AbstractEntity {
+public class BannerDto {
 
-    @Column(nullable = false)
+    private Long id;
+
     private String name;
 
-    @Column(nullable = false)
-    @Type(type = "java.math.BigDecimal")
     private BigDecimal price;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "category_id")
     private Category category;
 
-    @Column(nullable = false)
     private String content;
 
-    @Column
     private boolean deleted;
 
-    public Banner() {
-    }
-
-    public Banner(String name, Float price, Category category, String content, boolean deleted) {
-        this.name = name;
-        this.price = new BigDecimal(price);
-        this.category = category;
-        this.content = content;
-        this.deleted = deleted;
-    }
-
-    public Banner(String name, String content) {
-        this.name = name;
-        this.content = content;
+    public BannerDto() {
     }
 
     public Long getId() {
@@ -48,6 +32,14 @@ public class Banner extends AbstractEntity {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public BannerDto(String name, BigDecimal price, Category category, String content, boolean deleted) {
+        this.name = name;
+        this.price = price;
+        this.category = category;
+        this.content = content;
+        this.deleted = deleted;
     }
 
     public String getName() {
@@ -88,9 +80,5 @@ public class Banner extends AbstractEntity {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
-    }
-
-    public void setPriceFloat(float price) {
-        this.price=new BigDecimal(price);
     }
 }

@@ -18,7 +18,7 @@
                 <div class="form-group row">
                     <label class="col-sm-2 col-form-label">Price</label>
                     <div class="col-sm-5">
-                        <input type="text" class="form-control" name="price" value="${banner.price}"
+                        <input type="text" class="form-control" name="price" value="${banner.price!0}"
                                placeholder="Enter banner's price">
                     </div>
                 </div>
@@ -42,7 +42,7 @@
                     <div class="input-group col-sm-5">
                         <textarea class="form-control" aria-label="With textarea" name="content"
                                   value="${banner.content}"
-                                  placeholder="${banner.content}"></textarea>
+                                  placeholder="${banner.content!input_text}"></textarea>
                     </div>
                 </div>
                 <div class="form-group row" style="height: 100px"></div>
@@ -57,7 +57,7 @@
 
                 <div class="form-group row">
                     <div class="col">
-                        <input type="hidden" value="${banner.id}" name="bannerId">
+                        <input type="hidden" value="${banner.id!-1}" name="bannerId">
                         <input type="hidden" value="${_csrf.token}" name="_csrf">
                         <button type="submit" class="btn btn-primary mt-2 mr-3">Save</button>
             </form>
@@ -66,7 +66,7 @@
         <div class="text-right">
             <form action="/banner" method="post">
                 <input type="hidden" name="_method" value="delete"/>
-                <input type="hidden" value="${banner.id}" name="bannerId">
+                <input type="hidden" value="${banner.id!-1}" name="bannerId">
                 <input type="hidden" value="${_csrf.token}" name="_csrf">
                 <button type="submit" class="btn btn-primary mt-2 mr-3 bg-danger">Delete</button>
             </form>

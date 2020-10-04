@@ -31,7 +31,7 @@ public class BannerServiceImpl implements BannerService {
 
     @Override
     @Transactional
-    public Iterable<Banner> findAll() {
+    public List<Banner> findAll() {
         return bannerRepo.findAllByDeleted(false);
     }
 
@@ -57,17 +57,21 @@ public class BannerServiceImpl implements BannerService {
 
     @Override
     @Transactional
+    public Optional<Banner> getById(Long id){
+        return bannerRepo.findById(id);
+    }
+
+    @Override
+    @Transactional
     public Banner getInstance() {
         Iterable<Category> categories = categoryRepo.findAllByDeleted(false);
-        if (categories.iterator().hasNext()) {
-            return new Banner(
-                    "new Banner",
-                    0.f,
-                    categories.iterator().next(),
-                    "input text",
-                    true
-            );
-        } else return null;
+        return new Banner(
+                "new Banner",
+                0.f,
+                categories.iterator().hasNext() ? categories.iterator().next() : null,
+                "input text",
+                false
+        );
     }
 
     @Override
@@ -123,7 +127,7 @@ public class BannerServiceImpl implements BannerService {
         return bannerRepo.findAllByDeletedAndNameAndIdIsNot(
                 false,
                 banner.getName(),
-                banner.getId()
+                banner.getId() == null ? -1 : banner.getId()
         ).size() == 0;
     }
 
