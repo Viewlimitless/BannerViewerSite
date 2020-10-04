@@ -52,7 +52,8 @@ public interface BannerRepo extends CrudRepository<Banner, Long> {
 
     List<Banner> findAllByNameContainsAndDeletedIsFalse(String name);
 
-    List<Banner> findAllByCategoryAndDeleted(Category category, boolean deleted);
+    @Query(value = "select * from banner b where b.category_id = ?1 and deleted is false;", nativeQuery = true)
+    List<Banner> findAllByCategoryAndDeleted(Long id);
 
     List<Banner> findAllByDeletedAndNameAndIdIsNot(boolean deleted, String name, Long id);
 

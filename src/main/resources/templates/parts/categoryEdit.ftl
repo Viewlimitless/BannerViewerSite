@@ -32,7 +32,7 @@
                 </#if>
                 <div class="form-group row">
                     <div class="col">
-                        <input type="hidden" value="${category.id}" name="categoryId">
+                        <input type="hidden" value="${category.id!-1}" name="categoryId">
                         <input type="hidden" value="${_csrf.token}" name="_csrf">
                         <button type="submit" class="btn btn-primary mt-2 mr-3">Save</button>
             </form>
@@ -40,7 +40,7 @@
         <div class="text-right">
             <form action="/category" method="post">
                 <input type="hidden" name="_method" value="delete"/>
-                <input type="hidden" value="${category.id}" name="categoryId">
+                <input type="hidden" value="${category.id!-1}" name="categoryId">
                 <input type="hidden" value="${_csrf.token}" name="_csrf">
                 <button type="submit" class="btn btn-primary mt-2 mr-3 bg-danger">Delete</button>
             </form>

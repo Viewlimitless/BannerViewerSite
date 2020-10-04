@@ -11,7 +11,7 @@ create table category (
     id bigint not null,
     deleted bit not null,
     name varchar(255) not null,
-    reqname varchar(255) not null,
+    reqname varchar(255) default 'request' not null,
     primary key (id));
 
 create table hibernate_sequence (

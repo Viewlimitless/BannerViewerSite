@@ -2,21 +2,24 @@ package com.platunov.bannerviewer.service;
 
 import com.platunov.bannerviewer.domain.Banner;
 import com.platunov.bannerviewer.domain.Category;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 
 public interface CategoryService {
-    Iterable<Category> findAll();
+    List<Category> findAll();
 
-    Category save(Category category);
+    void save(Category category);
+
+    Optional<Category> getById(Long id);
 
     void deleteById(Long id);
 
     List<Category> findAllByNameContains(String name);
 
-    List<Banner> findBannersInCategory(Category category);
+    List<Banner> findBannersInCategory(Long categoryId);
 
     boolean correctInstance(Category category);
 }

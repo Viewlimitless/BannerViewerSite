@@ -2,23 +2,30 @@ package com.platunov.bannerviewer.conroller;
 
 import com.platunov.bannerviewer.domain.Banner;
 import com.platunov.bannerviewer.domain.Category;
+import com.platunov.bannerviewer.dto.CategoryDto;
+import com.platunov.bannerviewer.mapper.CategoryMapper;
 import com.platunov.bannerviewer.service.CategoryService;
+import com.platunov.bannerviewer.util.ProjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Controller
 @RequestMapping("/category")
 public class CategoryController {
     private CategoryService categoryService;
+    private CategoryMapper categoryMapper;
 
     @Autowired
-    public CategoryController(CategoryService categoryService) {
+    public CategoryController(CategoryService categoryService, CategoryMapper categoryMapper) {
         this.categoryService = categoryService;
+        this.categoryMapper = categoryMapper;
     }
 
     @GetMapping
@@ -26,24 +33,23 @@ public class CategoryController {
             @RequestParam(required = false, defaultValue = "") String filter,
             Model model) {
 
-        Iterable<Category> categories;
-
-        categories = getCategoriesByFilter(filter);
-
-        model.addAttribute("categories", categories);
+        model.addAttribute("categories"
+                , getCategoriesByFilter(filter));
         model.addAttribute("filter", filter);
 
         return "categoryList";
     }
 
-    private Iterable<Category> getCategoriesByFilter(String filter) {
-        Iterable<Category> categories;
+    private List<CategoryDto> getCategoriesByFilter(String filter) {
         if (filter != null && !filter.isEmpty()) {
-            categories = categoryService.findAllByNameContains(filter);
+            return categoryService.findAllByNameContains(filter).stream()
+                    .map(categoryMapper::toDto)
+                    .collect(Collectors.toList());
         } else {
-            categories = categoryService.findAll();
+            return categoryService.findAll().stream()
+                    .map(categoryMapper::toDto)
+                    .collect(Collectors.toList());
         }
-        return categories;
     }
 
     @PostMapping
@@ -51,32 +57,38 @@ public class CategoryController {
             @RequestParam(required = false, defaultValue = "") String filter,
             Model model
     ) {
-        Category category = new Category("new Category", "request", true);
 
-        categoryService.save(category);
-
-        categoryEditForm(category, "Create new Category", filter, model);
-
-        return "categoryEdit";
+        String editorTitle = "Create new Category";
+        model.addAttribute("editorTitle", editorTitle);
+        return categoryEditForm(new CategoryDto("new Category", "request", false)
+                , editorTitle, filter, model);
     }
 
     @GetMapping("{category}")
     public String categoryEditForm(
-            @PathVariable Category category,
+            @PathVariable("category") String categoryId,
             @RequestParam(required = false, defaultValue = "") String myEditorTitle,
             @RequestParam(required = false, defaultValue = "") String filter,
             Model model
+    ){
+        Optional<Category> optional = categoryService.getById(ProjectUtils.tryParseLong(categoryId));
+        if (optional.isPresent() && !optional.get().isDeleted()) {
+            return categoryEditForm(categoryMapper.toDto(optional.get()), myEditorTitle, filter, model);
+        } else return categoryList(filter, model);
+    }
+
+    private String categoryEditForm(
+            CategoryDto categoryDto,
+            String myEditorTitle,
+            String filter,
+            Model model
     ) {
-        model.addAttribute("category", category);
+        model.addAttribute("category", categoryDto);
         model.addAttribute("categories", getCategoriesByFilter(filter));
         model.addAttribute("filter", filter);
 
-        if(category == null || category.isDeleted()) {
-            return "categoryList";
-        }
-
         if (myEditorTitle.isEmpty()) {
-            model.addAttribute("editorTitle", String.format("%s ID: %s", category.getName(), category.getId()));
+            model.addAttribute("editorTitle", String.format("%s ID: %s", categoryDto.getName(), categoryDto.getId()));
         } else {
             model.addAttribute("editorTitle", myEditorTitle);
         }
@@ -88,21 +100,27 @@ public class CategoryController {
     public String categorySave(
             @RequestParam String categoryName,
             @RequestParam String request,
-            @RequestParam("categoryId") Category category,
+            @RequestParam String categoryId,
             @RequestParam(required = false, defaultValue = "") String filter,
             Model model
     ) {
-        category.setName(categoryName);
-        category.setReqName(request);
-
+        Category category;
+        Long catId = ProjectUtils.tryParseLong(categoryId);
+        if (catId.longValue() == -1) {
+            category = new Category(categoryName, request, false);
+        } else {
+            Optional<Category> optional = categoryService.getById(catId);
+            if (optional.isPresent()) {
+                category = optional.get();
+                category.setName(categoryName);
+                category.setReqName(request);
+            } else return "redirect:/category";
+        }
 
         if (!categoryService.correctInstance(category)) {
             model.addAttribute("allertMessage", "Category name or request are already exists or incorrect");
-            categoryEditForm(category, "", filter, model);
-            return "categoryEdit";
+            return categoryEditForm(categoryMapper.toDto(category), "", filter, model);
         }
-
-        category.setDeleted(false);
 
         categoryService.save(category);
 
@@ -111,11 +129,16 @@ public class CategoryController {
 
     @DeleteMapping
     public String deleteCategory(
-            @RequestParam("categoryId") Category category,
+            @RequestParam String categoryId,
             @RequestParam(required = false, defaultValue = "") String filter,
             Model model
     ) {
-        List<Banner> banners = categoryService.findBannersInCategory(category);
+        Long catId = ProjectUtils.tryParseLong(categoryId);
+        if (catId.longValue() == -1) {
+            return categoryList(filter, model);
+        }
+
+        List<Banner> banners = categoryService.findBannersInCategory(catId);
         if (banners.size() > 0) {
             StringBuilder mes = new StringBuilder("Several banners in this category: ");
 
@@ -123,14 +146,12 @@ public class CategoryController {
                 mes.append("ID:" + banners.get(i).getId() + " ");
             }
 
-
             model.addAttribute("allertMessage", mes);
-            categoryEditForm(category, "", filter, model);
+            categoryEditForm(categoryId, "", filter, model);
             return "categoryEdit";
-
         }
 
-        categoryService.deleteById(category.getId());
+        categoryService.deleteById(catId);
         return "redirect:/category";
     }
 

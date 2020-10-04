@@ -109,7 +109,7 @@ public class BannerController {
 
 
         try {
-            banner.setPriceFloat(ProjectUtils.tryParseFloat(price));
+            banner.setPriceFloat(ProjectUtils.parseFloat(price));
         } catch (NumberFormatException e) {
             model.addAttribute("allertMessage", "Changes are not applied. Price is incorrect");
             bannerEditForm(banner, "", filter, model);

@@ -26,14 +26,19 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional
-    public Iterable<Category> findAll() {
+    public List<Category> findAll() {
         return categoryRepo.findAllByDeleted(false);
     }
 
     @Override
     @Transactional
-    public Category save(Category category) {
-        return categoryRepo.save(category);
+    public void save(Category category) {
+            categoryRepo.save(category);
+    }
+
+    @Override
+    public Optional<Category> getById(Long id){
+        return categoryRepo.findById(id);
     }
 
     @Override
@@ -58,24 +63,28 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional
-    public List<Banner> findBannersInCategory(Category category) {
-        return bannerRepo.findAllByCategoryAndDeleted(category, false);
+    public List<Banner> findBannersInCategory(Long categoryId) {
+        return bannerRepo.findAllByCategoryAndDeleted(categoryId);
     }
 
     @Override
     @Transactional
     public boolean correctInstance(Category category) {
-        if (category.getName().trim().isEmpty() || category.getReqName().trim().isEmpty()) {
+        if (category.getName() == null || category.getName().trim().isEmpty() || category.getName().length() > 255 ){
+            return false;
+        }else if (category.getReqName() == null || category.getReqName().trim().isEmpty() || category.getReqName().length() > 255){
             return false;
         } else if
         (categoryRepo.findAllByDeletedAndNameAndIdIsNot(
                         false,
                         category.getName(),
-                        category.getId()).size() != 0) {
+                        category.getId() == null ? -1 : category.getId()
+                ).size() != 0) {
             return false;
         } else return categoryRepo.findAllByDeletedAndReqNameAndIdIsNot(
-                        false,
-                        category.getReqName(),
-                        category.getId()).size() == 0;
+                    false,
+                    category.getReqName(),
+                    category.getId() == null ? -1 : category.getId()
+            ).size() == 0;
     }
 }

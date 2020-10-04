@@ -1,23 +1,19 @@
-package com.platunov.bannerviewer.domain;
+package com.platunov.bannerviewer.dto;
 
-import javax.persistence.*;
+public class CategoryDto {
 
-@Entity
-public class Category extends AbstractEntity{
+    private Long id;
 
-    @Column(nullable = false)
     private String name;
 
-    @Column(columnDefinition = "varchar(255) default 'request' not null", name = "reqname", nullable = false)
     private String reqName;
 
-    @Column
     private boolean deleted;
 
-    public Category() {
+    public CategoryDto() {
     }
 
-    public Category(String name, String reqName, boolean deleted) {
+    public CategoryDto(String name, String reqName, boolean deleted) {
         this.name = name;
         this.reqName = reqName;
         this.deleted = deleted;
