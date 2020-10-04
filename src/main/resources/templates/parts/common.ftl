@@ -26,10 +26,10 @@
             <div class="row justify-content-around">
                 <#nested>
             </div>
-            <#if mainAllertMeeaage??>
+            <#if mainAlertMessage??>
                 <div class="form-group row mt-1">
                     <div class="alert alert-danger mx-auto" style="width: 900px"; role="alert">
-                        ${mainAllertMeeaage}
+                        ${mainAlertMessage}
                     </div>
                 </div>
             </#if>

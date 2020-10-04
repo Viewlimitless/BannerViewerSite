@@ -59,7 +59,7 @@ public class BannerController {
             return "bannerEdit";
         } else model.addAttribute("banners", bannerService.findAllByNameContains(filter));
         model.addAttribute("filter", filter);
-        model.addAttribute("mainAllertMeeaage", "Create category first");
+        model.addAttribute("mainAlertMessage", "Create category first");
         return "bannerList";
     }
 
