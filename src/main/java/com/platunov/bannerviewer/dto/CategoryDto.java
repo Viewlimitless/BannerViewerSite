@@ -6,16 +6,16 @@ public class CategoryDto {
 
     private String name;
 
-    private String reqName;
+    private String reqname;
 
     private boolean deleted;
 
     public CategoryDto() {
     }
 
-    public CategoryDto(String name, String reqName, boolean deleted) {
+    public CategoryDto(String name, String reqname, boolean deleted) {
         this.name = name;
-        this.reqName = reqName;
+        this.reqname = reqname;
         this.deleted = deleted;
     }
 
@@ -35,12 +35,12 @@ public class CategoryDto {
         this.name = name;
     }
 
-    public String getReqName() {
-        return reqName;
+    public String getReqname() {
+        return reqname;
     }
 
-    public void setReqName(String reqName) {
-        this.reqName = reqName;
+    public void setReqname(String reqname) {
+        this.reqname = reqname;
     }
 
     public boolean isDeleted() {
